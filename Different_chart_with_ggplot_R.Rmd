@@ -1,0 +1,824 @@
+---
+title: "Visual Analysis"
+author: "Shardendu Jha"
+date: "11/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Part-1
+# Excercise - 1
+
+```{r }
+
+#Loading the libaries
+
+library(ggplot2)
+library(ggthemes)
+library(nlme)
+library(gganimate)
+library(gapminder)
+library(ggExtra)
+library(psych)
+library(reshape2)
+library(dplyr)
+library(nycflights13)
+library(ggcorrplot)
+library(waffle)
+library(tidyr)
+library(scales)
+library(ggalt)
+library(data.table)
+library(extrafont)
+library(lubridate)
+library(DT)
+library(grid)
+library(gridExtra)
+library(prettydoc)
+library(devtools)
+library(tidyverse)
+library(ggdark)
+library(here)
+library(png)
+library(gifski)
+library(forcats)
+library(tufte)
+library(colorspace)
+library(viridisLite)
+library(Zelig)
+library(formatR)
+library(DiagrammeR)
+library(xaringan)
+library(ggridges)
+library(GGally)
+
+```
+```{r }
+
+#Defining the general colors to avoid hard coding  
+fill_color = 'darkred'
+decoration_color = 'cyan4'
+main_color = 'darkolivegreen'
+sub_color = 'orange'
+
+# customize theme
+my_first_theme <- theme_gray() + theme(
+  
+  plot.title=element_text(size=20,face="bold", family="American Typewriter",color=decoration_color,
+                          hjust=0.5,
+                          lineheight=1.2),  
+  plot.subtitle=element_text(size= 15, family="American Typewriter",color=decoration_color,
+                             face="bold",
+                             hjust=0.5), 
+  plot.caption=element_text(size=15),  
+  plot.background=element_blank(), 
+  legend.key=element_blank(),
+  legend.title=element_blank(),
+  panel.grid.major=element_blank(), 
+  panel.grid.minor=element_blank(),
+  panel.border=element_blank(),
+  legend.position=c(0.815, 0.27),
+  panel.background=element_blank(),
+  strip.background=element_blank(),
+  strip.text =element_text(size=12, color=decoration_color),
+  axis.title.x=element_text(vjust=10,size=15), 
+  axis.ticks =element_blank(),
+  axis.line =element_line(colour=decoration_color,size=0.3, linetype="dashed"),
+  axis.text = element_text(size = 10,angle = 30,vjust = .5),  
+  
+)
+```
+# Excercise - 2
+```{r }
+
+# simple chart
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_freqpoly(color = sub_color)
+
+#display with bin deatils
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_freqpoly(colour = sub_color, binwidth = 0.8)
+#Changing the bin width (less details)
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_freqpoly(colour = sub_color, binwidth = 10) 
+
+# display visual encoding as a color
+ggplot(gapminder, aes(gdpPercap, colour = continent)) +
+  geom_freqpoly() +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+# display with range value
+ggplot(gapminder, aes(gdpPercap, colour = continent)) +
+  geom_freqpoly() +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+  xlim(20000, 40000)
+
+```
+# Excercise - 3
+```{r }
+# check with histogram chart
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_histogram(fill= sub_color, binwidth =10)
+
+# check range with xrange with zoom
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_histogram(fill=sub_color, binwidth =10) + 
+  xlim(30000, 60000)
+
+#Histogram for different cut options 
+ggplot(gapminder, aes(gdpPercap, fill = continent)) +
+  geom_histogram(position = "dodge") + 
+  scale_fill_manual(values=c('red','orange','green','blue','purple'))
+
+#Changing the bin options
+ggplot(gapminder, aes(gdpPercap, fill = continent)) +
+  geom_histogram(position = "dodge",binwidth = 10) + 
+  scale_fill_manual(values=c('red','orange','green','blue','purple'))
+
+# two diffenrent chart comes together 
+
+ggplot(gapminder, aes(gdpPercap, fill = continent)) +
+  geom_histogram(colour=decoration_color, fill = decoration_color, alpha = 0.2, size =0) +
+  geom_freqpoly()+ 
+  scale_colour_manual(values=c('red','orange','green','blue','purple'))
+
+# two different chart comes together with range
+ggplot(gapminder, aes(gdpPercap, colour = continent)) +
+  geom_histogram(colour=decoration_color, fill = decoration_color, alpha = 0.2, size =0) +
+  geom_freqpoly()+ 
+  scale_colour_manual(values=c('red','orange','green','blue','purple'))
+  xlim(25000,75000)
+
+ggplot(gapminder, aes(gdpPercap)) + 
+  geom_histogram(binwidth = 2,fill='blue', colour='black') + 
+  facet_wrap(. ~ continent)
+
+# change color of the chart
+ggplot(gapminder, aes(gdpPercap, fill = continent)) + 
+  geom_histogram(binwidth = 2,colour = 'green') +
+  scale_colour_manual(values=c('red','orange','green','blue','purple'))
+  facet_wrap(. ~ continent)
+
+
+```
+# Excercise - 4
+```{r }
+
+# Simple boxplot
+ggplot(gapminder, aes(lifeExp,gdpPercap)) +
+  geom_boxplot(colour=main_color)
+
+# Boxplot using to numeric variable
+ggplot(gapminder, aes(lifeExp,gdpPercap)) +
+  geom_boxplot(aes(group = cut_width(gdpPercap, 10)), color='red')
+
+# Smaller groups 
+ggplot(gapminder, aes(lifeExp,gdpPercap)) +
+  geom_boxplot(aes(group = cut_width(gdpPercap, 5)), color='red')
+
+# Without outliers 
+ggplot(gapminder, aes(lifeExp,gdpPercap)) +
+  geom_boxplot(aes(group = cut_width(gdpPercap, 5)), color='red',outlier.alpha=0)
+
+# encoding for the outliers
+ggplot(gapminder, aes(lifeExp,gdpPercap)) +
+  geom_boxplot(aes(group = cut_width(gdpPercap, 5)), color='red',
+               color='blue',
+               outlier.alpha = 0.5, 
+               outlier.shape = 22, 
+               outlier.color=decoration_color)
+
+```
+# Excercise - 5
+```{r }
+#Simple density chart
+ggplot(gapminder, aes(gdpPercap)) +  
+  geom_density(fill = main_color, color = NA)
+
+#Multiple density chart 
+ggplot(gapminder, aes(gdpPercap, group = continent, fill = continent)) +
+  geom_density(adjust = 1.5 , color = NA) + 
+  scale_colour_manual(values=c('red','orange','green','blue','purple'))  
+
+#Multiple density chart, with using one color and transparency 
+ggplot(gapminder, aes(gdpPercap, group = continent, fill = continent)) +
+  geom_density(adjust = 1.5 , color = NA, fill='purple', alpha =0.1) 
+
+#Small multiple density for carat by the different cuts 
+ggplot(gapminder, aes(gdpPercap, group = continent, fill = continent)) + 
+  geom_density(color = NA) +
+  scale_colour_manual(values=c('red','orange','green','blue','purple')) +   
+  facet_wrap(. ~ continent) 
+
+
+```
+# Excercise - 6
+```{r }
+#Basic scatter plot 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) + 
+  geom_point(color='red')
+
+#Basic scatter plot - adjusting the size 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +  
+  geom_point(size=0.5, color='red') 
+
+#Basic scatter plot - adjusting the opacity
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +  
+  geom_point(alpha=0.3, color='red')
+
+#Basic scatter plot changing the Y limits
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +  
+  geom_point(alpha=0.3, color='red') 
+  ylim(836., 978.)
+
+#Axis labeling depending on the quantiles 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) + 
+  geom_point(size=0.7, alpha=0.7, color='red')  + 
+  scale_x_continuous(breaks = round(as.vector(quantile(gapminder$pop)), digits = 1))+
+  scale_y_continuous(breaks = round(as.vector(quantile(gapminder$gdpPercap)), digits = 1)) 
+
+#Adding price as another visual encoding using a colour code 
+ggplot(gapminder, aes(x=pop, y=gdpPercap, colour = pop)) +
+  geom_point(size=0.7, alpha=1)+
+  scale_colour_gradient(low = sub_color, high = 'red') 
+
+
+#Adding a trend line 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_point(color=main_color, size=0.8, alpha=0.2)+
+  stat_smooth(color=decoration_color)
+
+#Small multiples - one variable
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_point(color=main_color, size=0.8, alpha=0.2) +
+  facet_wrap( ~ continent, ncol=2) +
+  stat_smooth(color=decoration_color) 
+
+#Small multiples - one variable with free scale 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_point(color=main_color, size=0.8, alpha=0.2) +
+  facet_wrap( ~ continent, ncol=2, scales = "free") +
+  stat_smooth(color=decoration_color)
+
+
+```
+# Excercise - 7
+```{r }
+
+#Density
+pp <- ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_point(color=main_color) + 
+  theme(axis.title=element_blank(), axis.text=element_blank())
+
+ggMarginal(pp, type = "density", fill = main_color, alpha=1, color='transparent')
+
+#Box-plot  
+
+ggMarginal(pp, type = "boxplot", size=30, fill=main_color)
+
+#Histogram  
+
+ggMarginal(pp, type = "histogram", size=20, fill=main_color)
+
+
+```
+# Excercise - 8
+
+#Simple beewswarm
+ggplot(gapminder, aes(x=gdpPercap, y=continent)) + 
+  geom_quasirandom(size=3, alpha=0.7, color=main_color, groupOnX=FALSE)
+
+#Adding color
+ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
+  geom_quasirandom(size=3, alpha=0.7, groupOnX=FALSE) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Adding color
+ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
+  geom_quasirandom(alpha=0.7, groupOnX=FALSE, method = "smiley") +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+```{r }
+
+#Simple beewswarm
+ggplot(gapminder, aes(x=gdpPercap, y=continent)) + 
+  geom_quasirandom(size=3, alpha=0.7, color=main_color, groupOnX=FALSE)
+
+#Adding color
+ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
+  geom_quasirandom(size=3, alpha=0.7, groupOnX=FALSE) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Adding color
+ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
+  geom_quasirandom(alpha=0.7, groupOnX=FALSE, method = "smiley") +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+
+```
+# Excercise - 9
+```{r }
+#Aggregation through hexagonal binning - defining the number of bins 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_hex(bins=60, alpha =0.8)+
+  xlim(50000, 90000)
+  scale_fill_gradient(low=main_color, high=sub_color) 
+
+#Aggregation through hexagonal binning - logarithmic scaling 
+ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
+  geom_hex(alpha = 0.6) +
+  scale_x_log10(breaks = round(as.vector(quantile(gapminder$pop)), digits = 1))+
+  scale_y_log10(breaks = round(as.vector(quantile(gapminder$gdpPercap)), digits = 1))+
+  scale_fill_gradient(low=main_color, high=sub_color) 
+
+
+```
+# Excercise - 10
+```{r }
+#General scatter plot  
+ggplot(gapminder, aes(pop, lifeExp)) +
+  geom_point(colour = 'orange')   
+
+#Apply a log scale to the X axis postiion 
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(colour = 'blue') +
+  scale_x_log10()  
+
+#Apply a a linear transformation to the Y axis position with limits 
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(colour = main_color) +
+  scale_x_log10() +
+  scale_y_continuous(limits = c(0, 50))
+#Apply a a linear transformation to the Y axis position with defining the breaks 
+ggplot(gapminder, aes(pop, lifeExp)) +
+  geom_point(colour = main_color) +
+  scale_x_log10() +
+  scale_y_continuous(breaks = c(0, 20, 25,40, 45,55, 60, 80))
+
+#Add labels  
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(colour = main_color) +
+  scale_x_log10() +
+  scale_y_continuous(breaks = c(30, 40, 60), label = c("low", "center", "high"))
+
+#Change the Y scale in reverse 
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(colour = main_color) +
+  scale_x_log10() +
+  scale_y_reverse()
+
+#Add another visual encoding size 
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point(colour = main_color) +
+  scale_x_log10()  +
+  scale_size()  
+
+#Apply a scale rage to the variable size  
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, alpha=pop)) +
+  geom_point(colour = sub_color) +
+  scale_x_log10()  +
+  scale_size(range = c(2, 12))  
+
+#Add another visual encoding color 
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop,  colour = continent)) +
+  geom_point() +
+  scale_x_log10()  +
+  scale_size(range = c(2, 12)) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Apply another scale to color  
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop,  color = continent)) +
+  geom_point() +
+  scale_x_log10()  +
+  scale_size(range = c(2, 12)) +
+  scale_colour_manual(values = continent_colors) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Change to facet   
+ggplot(gapminder, aes(gdpPercap, lifeExp,  colour = continent)) +
+  geom_point() +
+  scale_x_log10()  +
+  scale_size(range = c(2, 12)) +
+  scale_colour_manual(values = continent_colors) +
+  facet_wrap(~continent) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Adding transparency    
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop,  colour = continent)) +
+  geom_point(alpha=0.2) +
+  scale_x_log10()  +
+  scale_size(range = c(2, 12)) +
+  scale_colour_manual(values = continent_colors) +
+  facet_wrap(~continent) +
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+
+
+```
+# Excercise - 11
+```{r }
+
+#Check the data 
+names(economics)
+head(economics, n=10)
+str(economics)
+summary(economics)
+
+#1 General plot definition and theme saved in a variable
+e <-ggplot(economics, aes(date, pop))
+
+#Showing the different geoms for time data 
+e + geom_point() + ggtitle("point")
+e + geom_bar(stat = "identity") + ggtitle("bar")
+e + geom_area() + ggtitle("area")
+e + geom_line() + ggtitle("line") 
+
+#2 Showing trends for different categories 
+
+#Check the data 
+names(economics_long)
+head(economics_long, n=10)
+str(economics_long)
+summary(economics_long)
+
+#Check the options 
+?geom_line()
+
+#All in one chart, what is the problem?
+ggplot(economics_long, aes(date, value, colour = variable)) +
+  geom_line() 
+
+#Changing to a small multiple 
+ggplot(economics_long, aes(date, value)) +
+  geom_line(colour=main_color) + 
+  facet_wrap(~variable, ncol=5) 
+
+#Changing to a small multiple - adding a reference line to make them comparable
+ggplot(economics_long, aes(date, value)) +
+  geom_line(colour=main_color) + 
+  facet_wrap(~variable, ncol=2) +
+  geom_hline(yintercept = 0.5, linetype = 2) 
+
+#Changing to a small multiple - adding a reference line to make them comparable
+ggplot(economics_long, aes(date, value)) +
+  geom_line(colour=main_color) + 
+  facet_wrap(~variable, ncol=4) +
+  geom_smooth(se=FALSE, colour= sub_color, size=0.5)
+
+
+#Group element in line and other charts 
+
+#Problem with line charts 
+
+#Check the data 
+names(Oxboys)
+head(Oxboys, n=10)
+str(Oxboys)
+summary(Oxboys)
+
+# A single line tries to connect all the observations 
+h<- ggplot(Oxboys, aes(age, height)) 
+h + geom_line() 
+
+#Grouping the observation by the variables subject
+h1 <- ggplot(Oxboys, aes(age, height, group=Subject))
+h1 + geom_line()
+
+#Introducing the smooth element 
+
+# Using the group aesthetic with both geom_line() and geom_smooth()
+# groups the data the same way for both layers
+h1 + geom_line() + 
+  geom_smooth(aes(), colour = 'purple', size = 0.5, method = "lm", se = FALSE)
+
+# Changing the group aesthetic for the smoother layer
+# fits a single line of best fit across all boys
+h1 + geom_line() +
+  geom_smooth(aes(group = 1), colour = 'purple', size = 3, method = "lm", se = TRUE)
+
+# Adding a confidence intervall
+h1 + geom_line() +
+  geom_smooth(aes(group = 1), colour = 'purple', size = 0.5, method = "lm", se = TRUE)
+
+# Now we combine a box-plot with the line chart 
+h2 <- ggplot(Oxboys, aes(Occasion, height))
+h2 + geom_boxplot() + geom_line()
+
+# We can add the a line chart again for all the subjects  
+h2 + geom_boxplot() + geom_line(aes(group = Subject), size=0.3, colour='purple')
+
+# We can add the a line chart grouped 
+h2 + geom_boxplot() + geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour='purple')
+
+# Creating a visual analytical story 
+names(gapminder)
+head(gapminder, n=10)
+str(gapminder)
+summary(gapminder)
+
+#General trend in life expectancy
+ggplot(gapminder) +
+  geom_line(aes (year, lifeExp, group = country), lwd = 0.3, show.legend = FALSE, colour = main_color) +
+  labs(title = "Life expectancy has increased worldwide") 
+
+#Checking on continents 
+ggplot(gapminder) +
+  geom_line(aes (year, lifeExp, group = country, color= continent), lwd = 0.3, show.legend = TRUE) +
+  scale_color_manual(values=c('red','orange','green','blue','purple')) + 
+  labs(title = "Life expectancy has increased worldwide") 
+
+#Introducing a small multiple to better distinguish between continents 
+ggplot() +
+  geom_line(data=gapminder, aes (year, lifeExp, group = country), lwd = 0.3, show.legend = FALSE, color= main_color) + 
+  facet_wrap(~ continent, ncol=5, strip.position = "bottom") +
+  scale_color_manual(values=c('red','orange','green','blue','purple')) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Life expectancy by continent")
+
+# Zooming in to see only Europe 
+ggplot(subset(gapminder, continent ==  "Europe")) +
+  geom_line(aes(year, lifeExp, group = country), color= main_color, show.legend = FALSE) +
+  labs(title = "Life expectancy in Europe - detecting an outlier") 
+
+# Select only Europe in order to understand which country is the outlier
+europe <- dplyr::filter(gapminder, continent == "Europe")
+
+ggplot(europe, aes(year, lifeExp)) +
+  geom_line(color=main_color) +
+  facet_wrap(~country) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Changes in Life Expectancy by country in europe") 
+
+#We can also show the trend as dots 
+ggplot(europe, aes(year, lifeExp)) +
+  geom_point(color="grey", size=2) +
+  facet_wrap(~country) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Changes in Life Expectancy by country in europe") 
+
+#Coming back to the general checking on patterns globally 
+
+#What will be the output of this code?
+
+#Adding a trend line - defining the method as loss 
+ggplot() +
+  geom_line(data=gapminder, aes (year, lifeExp, group = country), lwd = 0.3, show.legend = FALSE, color= decoration_color) + 
+  facet_wrap(~ continent, ncol=5, strip.position = "bottom") +
+  geom_smooth(data=gapminder, aes(year, lifeExp, group = 1), lwd = 1, method = 'loess', span = 2, se = TRUE, color = 'purple') +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Life expectancy by continent including trendline")
+
+#We can even add all data in the background by setting the variable we do the facet with to zero 
+ggplot() +
+  geom_line(data = transform(gapminder, continent = NULL), aes (year, lifeExp, group = country), alpha = 0.5, lwd = 0.1, colour = "white") +
+  geom_line(data=gapminder, aes (year, lifeExp, group = country), lwd = 0.3, show.legend = FALSE, color= main_color) +
+  geom_smooth(data=gapminder, aes(year, lifeExp, group = 1), lwd = 1, method = 'loess', span = 0.1, se = TRUE, color = 'purple') + 
+  facet_wrap(~ continent, ncol=5, strip.position = "bottom") + 
+  theme(strip.background = element_blank(), strip.placement = "outside") +
+  theme(axis.text.x = element_blank()) +
+  labs(title = "Life expectancy by continent including trendline, showing all data in the back") 
+
+#Showing how to add a line by aggregating the data 
+
+#Aggregating the data 
+gapminderavg<-aggregate(. ~year, data=gapminder, mean, na.rm=TRUE)
+head(gapminderavg, n=10)
+
+#Make a plot with the aggregated data 
+ggplot(gapminderavg) +
+  geom_line(aes (year, lifeExp), lwd = 0.3, show.legend = FALSE, color = 'purple') +
+  labs(title = "Total") 
+
+#Adding this line to the general plot by using twice the geom_line with different data sets  
+ggplot() +
+  geom_line(data=gapminderavg, aes (year, lifeExp), lwd = 2, show.legend = FALSE, color = 'purple') +
+  geom_line(data=gapminder, aes (year, lifeExp, group = country), lwd = 0.3, show.legend = FALSE, color = "white") +
+  labs(title = "Total vs. all countries")
+
+```
+# Excercise - 12
+```{r }
+# parallel coordinate with gapminder data
+
+#Parallel coordinates
+?ggparcoord
+
+#Check the data 
+names(gapminder)
+head(gapminder, n=10)
+str(gapminder)
+summary(gapminder)
+
+#Simple chart
+ggparcoord(gapminder, columns = 4:6, alphaLines = 0.3)
+
+#Simple chart, adding a color code 
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', alphaLines = 0.3) + 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Simple chart, adding a color code 
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', alphaLines = 0.3, boxplot = TRUE) + 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Showing points, changing transparency and color
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           showPoints = TRUE, alphaLines = 0.3)+ 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Showing points, changing transparency and color
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           showPoints = TRUE, alphaLines = 0.3)+ 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Different way of scaling: No scaling
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           showPoints = TRUE, alphaLines = 0.3, scale="globalminmax") + 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Different way of scaling: Standardize to Min = 0 and Max = 1
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           alphaLines = 0.3, scale="uniminmax") + 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))+   
+  facet_wrap(. ~ continent) 
+
+#Different way of scaling: Normalize univariately (substract mean & divide by sd)
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           showPoints = TRUE, alphaLines = 0.3, scale="std") + 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+#Different way of scaling: Standardize and center variables
+ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClass",
+           showPoints = TRUE, alphaLines = 0.3, scale="center")+ 
+  scale_color_manual(values=c('red','orange','green','blue','purple'))
+
+
+
+```
+# Excercise - 13
+
+```{r }
+
+#Creating a subsample 
+years<- filter(gapminder, year %in% c(1952, 2007)) %>% select(country, continent, year, lifeExp)
+#Check the data 
+names(years)
+head(years, n=10)
+str(years)
+summary(years)
+
+#Convert data to wide format
+years2 <- spread(years, year, lifeExp)
+names(years2) <- c("country", "continent", "y1952", "y2007")
+
+#Create a simple dumbbell plot
+ggplot(years2, aes(country, x=y1952, xend=y2007))+
+  geom_dumbbell(colour=main_color, size_x=0, size_xend=0)
+
+# sorted by 2007
+years3 <- arrange(years2, desc(y2007))
+years3$country <- factor(years3$country, level=rev(years3$country))
+
+#Create a simple dumbbell plot
+ggplot(years3, aes(country, x=y1952, xend=y2007))+
+  geom_dumbbell(colour=main_color, size_x=0, size_xend=0)
+
+#adding color for the continent
+ggplot(years3, aes(country, x=y1952, xend=y2007, color=continent))+
+  scale_color_manual(values=c('red','orange','green','blue','purple'))+
+  geom_dumbbell(size_x=0, size_xend=0, dot_guide=FALSE, dot_guide_size=0.2, dot_guide_colour=decoration_color)
+
+# to declutter small multiple
+ggplot(years3, aes(country, x=y1952, xend=y2007, color=continent))+
+  scale_color_manual(values=c('red','orange','green','blue','purple'))+
+  geom_dumbbell(size_x=0, size_xend=0, dot_guide=FALSE, dot_guide_size=0.2, dot_guide_colour=decoration_color) +
+  facet_wrap(. ~ continent, ncol=5) 
+
+
+#Creating a subsample 
+europe2 <- filter(gapminder, continent == "Asia" & year %in% c(1952, 2007)) %>% select(country, year, lifeExp)
+
+#Checking
+head(europe2, n=10)
+
+#Convert data to wide format
+europe3 <- spread(europe2, year, lifeExp)
+names(europe3) <- c("country", "y1952", "y2007")
+
+#Checking
+head(europe3, n=10)
+
+#Create a simple dumbbell plot
+ggplot(europe3, aes(country, x = y1952, xend = y2007))+
+  geom_dumbbell(color=main_color)  
+
+#Create a simple dumbbell plot
+ggplot(europe3, aes(country, x = y1952, xend = y2007)) +
+  geom_vline(xintercept=mean(europe3$y2007), color= decoration_color, linetype = "dashed") +
+  geom_dumbbell(color=main_color)  
+
+
+
+```
+# Excercise - 14
+```{r }
+
+#Waffle chart 
+
+?waffle
+
+#New simple dataset created 
+professional <- c(`Poor` = 520, `Rich` = 110)
+
+#A simple waffle 
+waffle(
+  professional, rows = 15, size = 0.2,
+  colors = c('darkgreen', 'red'), legend_pos = "bottom"
+)
+
+#You can use the iron statment to create a small multiple of waffles 
+iron(
+  waffle(c(thing1 = 0, thing2 = 100), colors = c('darkgreen', 'red'), rows = 5, flip=TRUE),
+  waffle(c(thing1 = 25, thing2 = 75), colors = c('darkgreen', 'red'), rows = 5, flip=TRUE)
+)
+
+#It's better to add the legend then separatly instead of showing it in every chart 
+iron(
+  waffle(c(thing1 = 0, thing2 = 100), colors = c('darkgreen', 'red'), rows = 5, keep = FALSE, legend='none'),
+  waffle(c(thing1 = 25, thing2 = 75), colors = c('darkgreen', 'red'), rows = 5, keep = FALSE, legend_pos = "bottom")
+)
+
+#5. Adding the legend only to one 
+
+iron(
+  
+  waffle(
+    c(`Poor` = 200, `Rich` = 110), rows = 5, size = 0.2,
+    colors = c('darkgreen', 'red'),
+    keep = FALSE,
+    title = "Finnish citizen wealth 2019", 
+    legend='none'),
+  
+  waffle(
+    c(`Poor` = 300, `Rich` = 100), rows = 5, size = 0.2,
+    colors = c('darkgreen', 'red'),
+    keep = FALSE,
+    title = "Estonian citizen wealth 2019",
+    legend ='none'),
+  
+  waffle(
+    c(`Poor` = 20, `Rich` = 1000), rows = 5, size = 0.2,
+    colors = c('darkgreen', 'red'),
+    keep = FALSE,
+    title = "Swedish citizen wealth 2019",
+    legend_pos = "bottom")
+  
+)
+
+
+```
+
+# Part - 2
+
+```{r }
+
+# setting the path for the folder
+setwd("/Users/shardendujha/Desktop/pop")
+
+# loading the file to R
+population <- read.csv("DP_LIVE_13112020140848034.csv")
+
+# checking the data
+
+names(population)
+head(population, n=10)
+str(population)
+summary(population)
+
+
+ggplot(population, aes(Value)) + 
+  geom_freqpoly(colour = sub_color, binwidth = 0.8)
+
+#Changing the bin width (less details)
+ggplot(population, aes(Value)) + 
+  geom_freqpoly(colour = sub_color, binwidth = 10)
+
+# display visual encoding as a color
+ggplot(population, aes(Value, colour = SUBJECT)) +
+  geom_freqpoly() +
+  scale_color_manual(values=c('red','green'))
+
+#Histogram for different cut options 
+ggplot(population, aes(Value, fill = SUBJECT)) +
+  geom_histogram(position = "dodge") + 
+  scale_fill_manual(values=c('red','green'))
+
+# Boxplot using to numeric variable
+ggplot(population, aes(SUBJECT,Value)) +
+  geom_boxplot(aes(group = cut_width(Value, 10)), color='red')
+
+```
+
