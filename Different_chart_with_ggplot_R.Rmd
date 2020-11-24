@@ -11,7 +11,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 # Part-1
-# Excercise - 1
 
 ```{r }
 
@@ -92,7 +91,7 @@ my_first_theme <- theme_gray() + theme(
   
 )
 ```
-# Excercise - 2
+
 ```{r }
 
 # simple chart
@@ -118,7 +117,7 @@ ggplot(gapminder, aes(gdpPercap, colour = continent)) +
   xlim(20000, 40000)
 
 ```
-# Excercise - 3
+# 
 ```{r }
 # check with histogram chart
 ggplot(gapminder, aes(gdpPercap)) + 
@@ -165,7 +164,7 @@ ggplot(gapminder, aes(gdpPercap, fill = continent)) +
 
 
 ```
-# Excercise - 4
+
 ```{r }
 
 # Simple boxplot
@@ -193,7 +192,7 @@ ggplot(gapminder, aes(lifeExp,gdpPercap)) +
                outlier.color=decoration_color)
 
 ```
-# Excercise - 5
+
 ```{r }
 #Simple density chart
 ggplot(gapminder, aes(gdpPercap)) +  
@@ -216,7 +215,7 @@ ggplot(gapminder, aes(gdpPercap, group = continent, fill = continent)) +
 
 
 ```
-# Excercise - 6
+
 ```{r }
 #Basic scatter plot 
 ggplot(gapminder, aes(x=pop, y=gdpPercap)) + 
@@ -266,7 +265,7 @@ ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
 
 
 ```
-# Excercise - 7
+
 ```{r }
 
 #Density
@@ -286,21 +285,6 @@ ggMarginal(pp, type = "histogram", size=20, fill=main_color)
 
 
 ```
-# Excercise - 8
-
-#Simple beewswarm
-ggplot(gapminder, aes(x=gdpPercap, y=continent)) + 
-  geom_quasirandom(size=3, alpha=0.7, color=main_color, groupOnX=FALSE)
-
-#Adding color
-ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
-  geom_quasirandom(size=3, alpha=0.7, groupOnX=FALSE) +
-  scale_color_manual(values=c('red','orange','green','blue','purple'))
-
-#Adding color
-ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) + 
-  geom_quasirandom(alpha=0.7, groupOnX=FALSE, method = "smiley") +
-  scale_color_manual(values=c('red','orange','green','blue','purple'))
 
 ```{r }
 
@@ -320,7 +304,7 @@ ggplot(gapminder, aes(x=gdpPercap, y=continent, colour=continent)) +
 
 
 ```
-# Excercise - 9
+
 ```{r }
 #Aggregation through hexagonal binning - defining the number of bins 
 ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
@@ -337,7 +321,7 @@ ggplot(gapminder, aes(x=pop, y=gdpPercap)) +
 
 
 ```
-# Excercise - 10
+
 ```{r }
 #General scatter plot  
 ggplot(gapminder, aes(pop, lifeExp)) +
@@ -419,7 +403,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop,  colour = continent)) +
 
 
 ```
-# Excercise - 11
+
 ```{r }
 
 #Check the data 
@@ -600,7 +584,7 @@ ggplot() +
   labs(title = "Total vs. all countries")
 
 ```
-# Excercise - 12
+
 ```{r }
 # parallel coordinate with gapminder data
 
@@ -658,7 +642,7 @@ ggparcoord(gapminder, columns = 4:6, groupColumn = 'continent', order = "anyClas
 
 
 ```
-# Excercise - 13
+
 
 ```{r }
 
@@ -723,7 +707,7 @@ ggplot(europe3, aes(country, x = y1952, xend = y2007)) +
 
 
 ```
-# Excercise - 14
+
 ```{r }
 
 #Waffle chart 
